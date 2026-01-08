@@ -1,10 +1,12 @@
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import './MarkdownStyles.css';
+import { useAuth } from '../context/AuthContext';
 
 function Home() {
+    const { user, loading } = useAuth();
     const [infoContent, setInfoContent] = useState('');
 
     useEffect(() => {
@@ -13,6 +15,9 @@ function Home() {
             .then(text => setInfoContent(text))
             .catch(err => console.error('Error loading markdown:', err));
     }, []);
+
+    if (loading) return <div className="container" style={{ textAlign: 'center', marginTop: '4rem' }}>Loading...</div>;
+    if (user) return <Navigate to="/dashboard" replace />;
 
     return (
         <div className="container" style={{ textAlign: 'center', marginTop: '4rem' }}>
