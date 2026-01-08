@@ -21,6 +21,12 @@
     text-decoration: none;
 }
 
+.nav-links {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
 .nav-links-container {
     display: flex;
     gap: 1rem;
