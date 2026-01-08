@@ -19,14 +19,8 @@ function Home() {
             <h1 style={{ fontSize: '3.5rem', marginBottom: '1.5rem', background: 'linear-gradient(to right, #38bdf8, #818cf8)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                 Welcome to the Community
             </h1>
-            <p style={{ fontSize: '1.25rem', color: '#94a3b8', maxWidth: '600px', margin: '0 auto 3rem auto', lineHeight: '1.6' }}>
-                Test Environment.
-            </p>
 
             <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'center' }}>
-                <Link to="/register" className="btn-primary" style={{ padding: '1rem 2rem', fontSize: '1.1rem' }}>
-                    Join Now
-                </Link>
                 <Link to="/login" className="link" style={{ padding: '1rem 2rem', fontSize: '1.1rem', border: '1px solid var(--glass-border)', borderRadius: '0.5rem', textDecoration: 'none', color: 'white' }}>
                     Sign In
                 </Link>

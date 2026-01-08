@@ -130,7 +130,7 @@ function Jobs() {
                             <button className="btn-close" onClick={closeModal}>&times;</button>
                         </div>
                         <div style={{ marginBottom: '1rem' }}>
-                            <span style={{ color: '#94a3b8', marginRight: '0.5rem' }}>Status:</span>
+                            <span style={{ color: 'var(--text-color)', marginRight: '0.5rem', opacity: 0.7 }}>Status:</span>
                             <span className={selectedJob.status === 'Running' ? 'status-running' : 'status-completed'}>
                                 {selectedJob.status}
                             </span>
@@ -138,7 +138,7 @@ function Jobs() {
                         <div className="modal-logs">
                             {selectedJob.logs && selectedJob.logs.map((log, index) => (
                                 <span key={index} className="log-line">
-                                    <span style={{ color: '#555', marginRight: '0.5rem' }}>&gt;</span>
+                                    <span style={{ color: 'var(--primary-color)', marginRight: '0.5rem' }}>&gt;</span>
                                     {log}
                                 </span>
                             ))}
