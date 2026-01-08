@@ -1,0 +1,64 @@
+/* Navbar.css */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--glass-border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.nav-brand {
+    font-size: 1.5rem;
+    font-weight: 800;
+    background: linear-gradient(to right, var(--primary-color), var(--accent-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-decoration: none;
+}
+
+.nav-links-container {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.nav-user-info {
+    color: var(--text-color);
+    opacity: 0.8;
+}
+
+.nav-logout-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    .nav-links-container {
+        flex-direction: column;
+        width: 100%;
+        text-align: center;
+    }
+
+    .nav-user-info {
+        display: none;
+        /* Hide greeting on mobile to save space, or keep slightly smaller */
+    }
+
+    .link,
+    .btn-primary {
+        width: 100%;
+        text-align: center;
+        box-sizing: border-box;
+    }
+}
