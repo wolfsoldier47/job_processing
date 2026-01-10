@@ -12,15 +12,30 @@ export const AuthProvider = ({ children }) => {
 
     const checkAuthStatus = async () => {
         try {
-            const res = await fetch('/api/profile');
+            const token = localStorage.getItem('token');
+            if (!token) {
+                setUser(null);
+                setLoading(false);
+                return;
+            }
+
+            const res = await fetch('/api/profile', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
             if (res.ok) {
                 const data = await res.json();
                 setUser(data);
             } else {
+                // Token is invalid or expired
+                localStorage.removeItem('token');
                 setUser(null);
             }
         } catch (error) {
             console.error("Auth check failed", error);
+            localStorage.removeItem('token');
             setUser(null);
         } finally {
             setLoading(false);
@@ -35,6 +50,9 @@ export const AuthProvider = ({ children }) => {
         });
 
         if (res.ok) {
+            const data = await res.json();
+            // Store JWT token in localStorage
+            localStorage.setItem('token', data.token);
             await checkAuthStatus();
             return true;
         }
@@ -50,9 +68,6 @@ export const AuthProvider = ({ children }) => {
         });
 
         if (res.ok) {
-            // Auto login after register? Or just return true to redirect to login?
-            // Let's assume we want them to login explicitly or we can auto-login if the backend set the cookie (which it usually doesn't on register unless changed)
-            // The current backend handlers.Register just returns 201 Created, no session.
             return true;
         }
         const err = await res.text();
@@ -61,10 +76,22 @@ export const AuthProvider = ({ children }) => {
 
     const logout = async () => {
         try {
-            await fetch('/api/logout', { method: 'POST' });
+            const token = localStorage.getItem('token');
+            if (token) {
+                await fetch('/api/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+            }
+            localStorage.removeItem('token');
             setUser(null);
         } catch (error) {
             console.error("Logout failed", error);
+            // Remove token anyway
+            localStorage.removeItem('token');
+            setUser(null);
         }
     };
 

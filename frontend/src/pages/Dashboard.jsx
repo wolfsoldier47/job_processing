@@ -15,7 +15,12 @@ function Dashboard() {
         if (jobId && jobStatus !== 'Completed') {
             interval = setInterval(async () => {
                 try {
-                    const res = await fetch(`/api/job/${jobId}`);
+                    const token = localStorage.getItem('token');
+                    const res = await fetch(`/api/job/${jobId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
                     if (res.ok) {
                         const data = await res.json();
                         setJobStatus(data.status);
@@ -34,7 +39,13 @@ function Dashboard() {
 
     const handleStartJob = async () => {
         try {
-            const res = await fetch('/api/job', { method: 'POST' });
+            const token = localStorage.getItem('token');
+            const res = await fetch('/api/job', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             if (res.ok) {
                 const data = await res.json();
                 setJobId(data.job_id);

@@ -19,7 +19,12 @@ function Jobs() {
 
     const fetchJobs = async () => {
         try {
-            const res = await fetch(`/api/jobs?page=${page}&limit=${limit}`);
+            const token = localStorage.getItem('token');
+            const res = await fetch(`/api/jobs?page=${page}&limit=${limit}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             if (res.ok) {
                 const data = await res.json();
                 setJobs(data.jobs || []);
@@ -33,7 +38,12 @@ function Jobs() {
     const handleViewLogs = async (job) => {
         setLoadingLogs(true);
         try {
-            const res = await fetch(`/api/joblogs/${job.id}`);
+            const token = localStorage.getItem('token');
+            const res = await fetch(`/api/joblogs/${job.id}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
             if (res.ok) {
                 const data = await res.json();
                 setSelectedJob(data);
