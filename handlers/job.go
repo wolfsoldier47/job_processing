@@ -61,11 +61,9 @@ func timer(job *Job) {
 }
 
 func LongRunningJob(w http.ResponseWriter, r *http.Request) {
-	// Get username from session
-	session, _ := Store.Get(r, "session-name")
-	username, ok := session.Values["username"].(string)
+	// Get username from context (set by middleware)
+	username, ok := r.Context().Value("username").(string)
 	if !ok {
-		// Should be handled by middleware by now, but just in case
 		username = "Unknown"
 	}
 

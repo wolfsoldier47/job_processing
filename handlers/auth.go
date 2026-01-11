@@ -3,23 +3,12 @@ package handlers
 import (
 	"community_project/database"
 	"community_project/models"
+	"community_project/utils"
 	"encoding/json"
 	"net/http"
 
-	"github.com/gorilla/sessions"
 	"golang.org/x/crypto/bcrypt"
 )
-
-var Store = sessions.NewCookieStore([]byte("super-secret-key"))
-
-func init() {
-	Store.Options = &sessions.Options{
-		Path:     "/",
-		MaxAge:   86400 * 7,
-		HttpOnly: true,
-		Secure:   false, // Important: Set to true for prod
-	}
-}
 
 func Register(w http.ResponseWriter, r *http.Request) {
 	var user models.User
@@ -62,18 +51,20 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	session, _ := Store.Get(r, "session-name")
-	session.Values["authenticated"] = true
-	session.Values["user_id"] = storedUser.ID
-	session.Values["username"] = storedUser.Username
-	session.Save(r, w)
+	// Generate JWT token
+	token, err := utils.GenerateToken(storedUser.ID, storedUser.Username)
+	if err != nil {
+		http.Error(w, "Error generating token", http.StatusInternalServerError)
+		return
+	}
 
-	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{
+		"token": token,
+	})
 }
 
 func Logout(w http.ResponseWriter, r *http.Request) {
-	session, _ := Store.Get(r, "session-name")
-	session.Values["authenticated"] = false
-	session.Save(r, w)
+	// JWT is stateless, logout is handled client-side by removing the token
 	w.WriteHeader(http.StatusOK)
 }

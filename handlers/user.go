@@ -6,15 +6,12 @@ import (
 )
 
 func Profile(w http.ResponseWriter, r *http.Request) {
-	session, _ := Store.Get(r, "session-name")
-
-	// Check if user is authenticated
-	if auth, ok := session.Values["authenticated"].(bool); !ok || !auth {
+	// Extract username from context (set by middleware)
+	username, ok := r.Context().Value("username").(string)
+	if !ok {
 		http.Error(w, "Forbidden", http.StatusForbidden)
 		return
 	}
-
-	username := session.Values["username"].(string)
 
 	response := map[string]string{
 		"message":  "Welcome to your profile",
