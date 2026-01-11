@@ -10,31 +10,28 @@ export const AuthProvider = ({ children }) => {
         checkAuthStatus();
     }, []);
 
-    const checkAuthStatus = async () => {
+    const checkAuthStatus = () => {
+        const token = localStorage.getItem('token');
+
+        if (!token) {
+            setLoading(false);
+            return;
+        }
+
         try {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                setUser(null);
-                setLoading(false);
-                return;
-            }
+            // Decode JWT token (payload is the middle part)
+            const payload = JSON.parse(atob(token.split('.')[1]));
 
-            const res = await fetch('/api/profile', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-
-            if (res.ok) {
-                const data = await res.json();
-                setUser(data);
-            } else {
-                // Token is invalid or expired
+            // Check if token is expired
+            if (payload.exp && payload.exp * 1000 < Date.now()) {
                 localStorage.removeItem('token');
                 setUser(null);
+            } else {
+                // Set user from token payload
+                setUser({ username: payload.username });
             }
         } catch (error) {
-            console.error("Auth check failed", error);
+            console.error("Invalid token", error);
             localStorage.removeItem('token');
             setUser(null);
         } finally {
@@ -51,9 +48,16 @@ export const AuthProvider = ({ children }) => {
 
         if (res.ok) {
             const data = await res.json();
-            // Store JWT token in localStorage
             localStorage.setItem('token', data.token);
-            await checkAuthStatus();
+
+            // Decode token to get user info
+            try {
+                const payload = JSON.parse(atob(data.token.split('.')[1]));
+                setUser({ username: payload.username });
+            } catch (error) {
+                console.error("Failed to decode token", error);
+            }
+
             return true;
         }
         const err = await res.text();
@@ -74,25 +78,10 @@ export const AuthProvider = ({ children }) => {
         throw new Error(err || 'Registration failed');
     };
 
-    const logout = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            if (token) {
-                await fetch('/api/logout', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-            }
-            localStorage.removeItem('token');
-            setUser(null);
-        } catch (error) {
-            console.error("Logout failed", error);
-            // Remove token anyway
-            localStorage.removeItem('token');
-            setUser(null);
-        }
+    const logout = () => {
+        // JWT is stateless - just remove token and clear user
+        localStorage.removeItem('token');
+        setUser(null);
     };
 
     return (
